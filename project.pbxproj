@@ -65,7 +65,6 @@
 		C81105A0228C2AD600A1A6FF = {
 			isa = PBXGroup;
 			children = (
-				C81105D6228C39F400A1A6FF /* Controllers */,
 				C81105AB228C2AD600A1A6FF /* VirtualTourist */,
 				C81105C3228C2AD800A1A6FF /* VirtualTouristTests */,
 				C81105AA228C2AD600A1A6FF /* Products */,
@@ -84,6 +83,7 @@
 		C81105AB228C2AD600A1A6FF /* VirtualTourist */ = {
 			isa = PBXGroup;
 			children = (
+				C81105D6228C39F400A1A6FF /* Controllers */,
 				C81105AC228C2AD600A1A6FF /* AppDelegate.swift */,
 				C81105AE228C2AD600A1A6FF /* ViewController.swift */,
 				C81105B0228C2AD600A1A6FF /* Main.storyboard */,

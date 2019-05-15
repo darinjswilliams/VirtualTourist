@@ -65,8 +65,7 @@
 		C81105A0228C2AD600A1A6FF = {
 			isa = PBXGroup;
 			children = (
-				C81105D3228C385900A1A6FF /* TravelLocationsViewController.swift */,
-				C81105D1228C383300A1A6FF /* PhotoAlbumViewController.swift */,
+				C81105D6228C39F400A1A6FF /* Controllers */,
 				C81105AB228C2AD600A1A6FF /* VirtualTourist */,
 				C81105C3228C2AD800A1A6FF /* VirtualTouristTests */,
 				C81105AA228C2AD600A1A6FF /* Products */,
@@ -103,6 +102,15 @@
 				C81105C6228C2AD800A1A6FF /* Info.plist */,
 			);
 			path = VirtualTouristTests;
+			sourceTree = "<group>";
+		};
+		C81105D6228C39F400A1A6FF /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				C81105D1228C383300A1A6FF /* PhotoAlbumViewController.swift */,
+				C81105D3228C385900A1A6FF /* TravelLocationsViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -10,50 +10,36 @@ import Foundation
 
 enum EndPoints {
     
+   
     
+   
     case loginBase
-    case logout
-    case signIn
-    case parseAppId
-    case parseApiKey
-    case getAuthenticateUser
-    case deleteSessionId
-    case getUserSession(String)
-    case getStudentBase
-    case getStudentLimit
-    case getStudentsSkip
-    case getStudentOrder
-    case getStudentURL(String)
+    case apiKeyFlicker
+    case secretFlickr
+    case getAuthentication(Double, Double)
+    case getPhotos(Int, Double, Double)
+    case getImageUrl(Int, Int, Int, String)
+ 
     
     
     var stringValue: String {
         switch self {
-        case .loginBase: return "https://onthemap-api.udacity.com/v1"
-        case .logout: return EndPoints.loginBase.stringValue + "/session"
+        case .loginBase: return "https://api.flickr.com/services/rest?api_key="
+       
+        case .apiKeyFlicker:
+            return "33911d170f574be0044d7bb44acd18c5"
             
-        case .signIn: return "https://auth.udacity.com/sign-up"
-        case .parseAppId: return "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"
-        case .parseApiKey: return "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
-        case .getAuthenticateUser:
-            return EndPoints.loginBase.stringValue + "/session"
-        case .deleteSessionId:
-            return EndPoints.loginBase.stringValue + "/session"
+        case .secretFlickr:
+            return "658f2cacfe33be62"
             
-        case .getUserSession(let sessionId):
-            return EndPoints.loginBase.stringValue + "/users/\(sessionId)"
-            
-        case .getStudentBase:
-            return "https://parse.udacity.com/parse/classes/StudentLocation?"
-            
-        case .getStudentLimit:
-            return EndPoints.getStudentBase.stringValue + "limit=100"
-            
-        case .getStudentsSkip:
-            return "https://parse.udacity.com/parse/classes/StudentLocation?Limit=200&skip=400"
-        case .getStudentOrder:
-            return "https://parse.udacity.com/parse/classes/StudentLocation?order=-updatedAt"
-        case .getStudentURL(let studentURL):
-            return (studentURL)
+        case .getAuthentication(let latitude, let longitude):
+            return EndPoints.loginBase.stringValue + EndPoints.apiKeyFlicker.stringValue + "&method=flickr.photos.search&format=json&tags=&accuracy=11&nojsoncallback=1&lat=\(latitude)&lon=\(longitude)"
+       
+        case .getPhotos(let pageNo, let latitude, let longitude):
+            return EndPoints.loginBase.stringValue + EndPoints.apiKeyFlicker.stringValue +
+            "&method=flickr.photos.search&format=json&tags=&page=\(pageNo)&accuracy=12&nojsoncallback=1&lat=\(latitude)&lon=\(longitude)&radius=1"
+        case .getImageUrl(let farm, let serverID, let id, let secret):
+            return  "https://farm\(farm).staticflickr.com/\(serverID)/\(id)_\(secret).jpg"
         }
     }
     

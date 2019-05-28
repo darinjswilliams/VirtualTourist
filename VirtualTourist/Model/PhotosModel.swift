@@ -9,37 +9,23 @@
 import Foundation
 
 struct FlickerResponse: Codable {
-    let photos: PublicPhoto?
-    let stat: String?
+    let photos: PublicPhoto
+    let stat: String
     
 }
 
 struct PublicPhoto: Codable {
-    let page: Int?
-    let pages: Int?
-    let perpage: Int?
-    let total: String?
-    let photo: [MyPhoto]?
+    let page, pages, perpage: Int
+    let total: String
+    let photo: [MyPhoto]
 }
 
 struct MyPhoto: Codable {
-    let id: String?
-    let owner: String?
-    let secret: String?
-    let server: String?
-    let farm: Int?
-    let title: String?
-    let ispublic, isfriend, isfamily: Int?
-    let urlZ: String?
-    let heightZ: String?
-    let widthZ: String?
+    let id, owner, secret, server: String
+    let farm: Int
+    let title: String
+    let ispublic, isfriend, isfamily: Int
     
-    enum CodingKeys: String, CodingKey {
-        case id, owner, secret, server, farm, title, ispublic, isfriend, isfamily
-        case urlZ = "url_z"
-        case heightZ = "height_z"
-        case widthZ = "width_z"
-    }
 }
 
 struct FlickrSearchPayload: Codable {

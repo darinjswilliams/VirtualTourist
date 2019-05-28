@@ -30,6 +30,9 @@ class ParseFickrAPI {
     
     class func getPhotoLocationByPageNumber(url: URL, completionHandler: @escaping (FlickerResponse?, Error?)-> Void){
         
+        
+        //Set the limit on amount of objects returned
+        
        self.taskForGETRequest(url: url, response: FlickerResponse.self) { (response, error) in
             guard let response = response else {
                 print("getPhotos: Failed")
@@ -70,7 +73,7 @@ class ParseFickrAPI {
             let jsonDecoder = JSONDecoder()
             do {
                 let result = try? jsonDecoder.decode(ResponseType.self, from: data)
-                print("Second Print:..." + String(data: data, encoding: .utf8)!)
+//                print("Second Print:..." + String(data: data, encoding: .utf8)!)
                 
                 DispatchQueue.main.async {
                     completionHandler(result, nil)
@@ -88,7 +91,5 @@ class ParseFickrAPI {
         return downloadTask
     }
     
-    
-    
-    
+
 }

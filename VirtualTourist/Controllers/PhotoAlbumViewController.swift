@@ -11,6 +11,8 @@ import CoreData
 import MapKit
 
 class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, MKMapViewDelegate  {
+ 
+    
     
     var dataController:DataController!
     var pin: Pin!
@@ -48,7 +50,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         super.viewWillAppear(animated)
         
         //TODO; CALL FLICKER GET PHOTOS
-               ParseFickrAPI.processPhotos(url: EndPoints.getAuthentication(coordinates.latitude, coordinates.longitude).url, completionHandler: handleGetFlickerPhotos(photos:error:))
+         callParseFlickrApi()
         
     }
     
@@ -63,6 +65,13 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     
+    func callParseFlickrApi () {
+        
+           ParseFickrAPI.processPhotos(url: EndPoints.getAuthentication(coordinates.latitude, coordinates.longitude).url, completionHandler: handleGetFlickerPhotos(photos:error:))
+        
+    }
+    
+    
     //MARK The repsone that calls update Map with student locations
     func handleGetFlickerPhotos(photos:FlickerResponse?, error:Error?) {
         
@@ -72,7 +81,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             print(error!)
             return
         }
-        var pageNum: Int = (photos.photos?.pages)!
+        
+        //Lets get the pages for photos object
+        let pageNum: Int = (photos.photos.pages)
         print("Here is the page number \(pageNum)")
     
         
@@ -98,15 +109,27 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             print(error!)
             return
         }
-        print("Photots \(photos.photos?.pages)")
+        print("Photots \(photos.photos.pages)")
+    
         
         //MARK: SEARCH FOR PHOTOS BY Getting AGE NUMBER TO NARROW PHOTO SEARCH
         //lets get all the ids so we can grab photos
-       photos.photos?.photo?.count
+        print("Photos Count \( photos.photos.photo.count )")
+        self.getImageByIdAndDownload(photos: photos)
         
-       
+    
     }
     
+    
+    func getImageByIdAndDownload(photos:FlickerResponse){
+    
+
+        for i in 1 ... 12 {
+            
+        print("\(photos.photos.photo[i].id), \(photos.photos.photo[i].secret), \(photos.photos.photo[i].farm), \(photos.photos.photo[i].server)")
+          
+      }
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 0
@@ -125,7 +148,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
        
     }
     
-
+    
+        
 }
 
 

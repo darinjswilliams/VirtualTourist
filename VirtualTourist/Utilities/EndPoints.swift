@@ -18,6 +18,7 @@ enum EndPoints {
     case secretFlickr
     case getAuthentication(Double, Double)
     case getPhotos(Int, Double, Double)
+    case searchForPhotoById(Int)
     case getImageUrl(Int, Int, Int, String)
  
     
@@ -40,6 +41,10 @@ enum EndPoints {
             "&method=flickr.photos.search&format=json&tags=&page=\(pageNo)&accuracy=12&nojsoncallback=1&lat=\(latitude)&lon=\(longitude)&radius=1"
         case .getImageUrl(let farm, let serverID, let id, let secret):
             return  "https://farm\(farm).staticflickr.com/\(serverID)/\(id)_\(secret).jpg"
+            
+        case .searchForPhotoById(let id):
+            return EndPoints.loginBase.stringValue + EndPoints.apiKeyFlicker.stringValue +
+                "&method=flickr.photos.getInfo&format=json&nojsoncallback=1&&photo_id=\(id)"
         }
     }
     

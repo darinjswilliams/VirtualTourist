@@ -115,6 +115,14 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         //MARK: SEARCH FOR PHOTOS BY Getting AGE NUMBER TO NARROW PHOTO SEARCH
         //lets get all the ids so we can grab photos
         print("Photos Count \( photos.photos.photo.count )")
+        
+        if photos.photos.photo.count <= 0  {
+            
+            print("NO PHOTOS AT THIS SITE \(photos.photos.photo.count)")
+            
+            return
+        }
+        
         self.getImageByIdAndDownload(photos: photos)
         
     
@@ -136,7 +144,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             let secret: String = photos.photos.photo[i].secret
             
             let imageUrl = EndPoints.getImageUrl(farm, serverID, id, secret).url
-            print(imageUrl)
+//            print(imageUrl)
+            
+          //TODO CHECK FOR IMAGE USING GUARD STATEMENT
             
             //Download Content of Photos
             let downloadImage = try! UIImage(data: Data(contentsOf: imageUrl))
@@ -145,7 +155,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             //Store content of Photos
             self.photosImage.append(downloadImage!)
             //TODO CALL DispatchQueue to update main
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 do {
                     
                     //GCD: Get Context
@@ -154,14 +164,25 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
                     //lets download the image
                     photoOfImage.flickrImages = downloadImage!.pngData() as Data?
                     
-                    //Add to GCD
+                    //Add Photo to GCD Pin
                     self.pin.addToPin(photoOfImage)
+                    
+                    try self.dataController.viewContext.save()
+                    print("The is ping count \(self.pin?.pin?.count ?? 0)")
+                    
+                    
+                   let imagePath = IndexPath(item: self.photosImage.count - 1, section: 0)
+                    
+                    //TODO RELOAD COLLECTIN VIEW
+            
                    
                 } catch let error {
-                    
+                    print(error.localizedDescription)
                 }
       }
     }
+        
+        //TODO ENABLE BUTTONG
 }
 
     

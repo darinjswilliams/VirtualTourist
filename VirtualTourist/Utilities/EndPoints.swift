@@ -19,7 +19,7 @@ enum EndPoints {
     case getAuthentication(Double, Double)
     case getPhotos(Int, Double, Double)
     case searchForPhotoById(Int)
-    case getImageUrl(Int, Int, Int, String)
+    case getImageUrl(Int, String, String, String)
  
     
     

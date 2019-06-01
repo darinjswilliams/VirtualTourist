@@ -37,9 +37,10 @@ struct FlickrSearchPayload: Codable {
 }
 
 struct SearchPageResult: Codable {
-    let page, pages, perpage: Int?
-    let total: String?
-    let photoMeta: [PublicPhoto]?
+    let page, pages, perpage: Int
+    let total, imageUrl: String
+    let photoMeta: [PublicPhoto]
+
     
     enum CodingKeys: String, CodingKey {
         case page = "page"
@@ -47,6 +48,7 @@ struct SearchPageResult: Codable {
         case perpage = "perpage"
         case total = "total"
         case photoMeta = "photo"
+        case imageUrl = "imageUrl"
     }
 }
 

@@ -49,7 +49,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        //TODO; CALL FLICKER GET PHOTOS
+        //TODO; CALL FLICKER GET PHOTOS PLACE IF STATEMENT TO GET GCD 
          callParseFlickrApi()
         
     }
@@ -124,12 +124,47 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     func getImageByIdAndDownload(photos:FlickerResponse){
     
 
+        //MARK LIMIT PHOTOS TO 12
+       
         for i in 1 ... 12 {
             
         print("\(photos.photos.photo[i].id), \(photos.photos.photo[i].secret), \(photos.photos.photo[i].farm), \(photos.photos.photo[i].server)")
-          
+            
+            let farm: Int = photos.photos.photo[i].farm
+            let serverID: String = photos.photos.photo[i].server
+            let id: String = photos.photos.photo[i].id
+            let secret: String = photos.photos.photo[i].secret
+            
+            let imageUrl = EndPoints.getImageUrl(farm, serverID, id, secret).url
+            print(imageUrl)
+            
+            //Download Content of Photos
+            let downloadImage = try! UIImage(data: Data(contentsOf: imageUrl))
+            
+            
+            //Store content of Photos
+            self.photosImage.append(downloadImage!)
+            //TODO CALL DispatchQueue to update main
+            DispatchQueue.main.sync {
+                do {
+                    
+                    //GCD: Get Context
+                    let photoOfImage = Photo(context: self.dataController.viewContext)
+                
+                    //lets download the image
+                    photoOfImage.flickrImages = downloadImage!.pngData() as Data?
+                    
+                    //Add to GCD
+                    self.pin.addToPin(photoOfImage)
+                   
+                } catch let error {
+                    
+                }
       }
     }
+}
+
+    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 0

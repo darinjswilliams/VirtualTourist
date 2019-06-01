@@ -27,6 +27,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     @IBOutlet weak var labelNoPhotos: UILabel!
     @IBOutlet weak var newPhotosButton: UIBarButtonItem!
     
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -61,6 +63,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         flowLayOut.minimumInteritemSpacing = 1
         flowLayOut.minimumLineSpacing = 1
         flowLayOut.itemSize = CGSize(width: 135, height: 135)
+        
         
         //TODO; CALL FLICKER GET PHOTOS PLACE IF STATEMENT TO GET GCD
         photoCount = (pin.pin?.count)!
@@ -103,7 +106,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     
-    
     @IBAction func backButtonPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
@@ -111,6 +113,17 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     //MARK Tapping this button should empty the photo album and fetch a new set of images
     @IBAction func newCollectionButtonPressed(_ sender: Any) {
     
+//        self.newPhotosButton.isEnabled = false
+        photoCount = 0
+        photosImage = [UIImage]()
+        let photoSet = pin?.pin
+        for photo in photoSet! {
+            dataController.viewContext.delete(photo as! NSManagedObject)
+        }
+        
+        collectionView.reloadData()
+        callParseFlickrApi()
+        initializeMapView()
         
     }
     
@@ -125,13 +138,13 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     //MARK The repsone that calls update Map with student locations
     func handleGetFlickerPhotos(photos:FlickerResponse?, error:Error?) {
         
-        
         guard let photos = photos else {
             print("Unable to Download photos from Flicker")
             print(error!)
             return
         }
         
+      
         //Lets get the pages for photos object
         let pageNum: Int = (photos.photos.pages)
         print("Here is the page number \(pageNum)")
@@ -146,6 +159,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         
         //Generate Random number to Narrow Scope
         let randPageNumber =  Int(arc4random_uniform(UInt32(pageNum) + 1))
+        
+        print("Here is the randome page number \(randPageNumber)")
         
               ParseFickrAPI.getPhotoLocationByPageNumber(url: EndPoints.getPhotos(randPageNumber, coordinates.latitude, coordinates.longitude).url, completionHandler: handleGetPhotoSearch(photos:error:))
     }
@@ -178,62 +193,17 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     
     }
     
-    func handleDownLoadPhotos(photos:UIImage?){
-        
-        guard let photos = photos else {
-            //TODO REPLACE WITH SHOW ERROR FUNCTION
-            print("Photo Error no Data")
-            return
-        }
-        
-     
-        
-        
-        //Update Image on Main Thread
-        DispatchQueue.main.async {
-            do {
-                //Append  images to Array
-                self.photosImage.append(photos)
-                print(photos)
-                self.collectionView.reloadData()
-                
-            //GCD: Get Context
-//            let photoOfImage = Photo(context: self.dataController.viewContext)
-//
-//            //Assign Image Data to GCD Photo in PNG Format
-//                photoOfImage.flickrImages = (photos.pngData() as Data?)
-//
-//
-//            //Add Photo to GCD Pin
-//            self.pin.addToPin(photoOfImage)
-//
-//
-//            //Save GCD Context
-//            try self.dataController.viewContext.save()
-//
-//            print("The is ping count \(self.pin?.pin?.count ?? 0)")
-//
-//           let imagePath = IndexPath(item: self.photosImage.count - 1, section: 0)
-//
-//                print("Here is the Image Index \(imagePath)")
-//                //TODO RELOAD COLLECTIN VIEW
-//                self.collectionView.reloadItems(at: [imagePath])
-                
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-        
-    }
+    
     
     func getImageByIdAndDownload(photos:FlickerResponse){
-    
-
+        
+        
         //MARK LIMIT PHOTOS TO 12
-       
+    
+      
         for i in 1 ... 12 {
             
-//        print("\(photos.photos.photo[i].id), \(photos.photos.photo[i].secret), \(photos.photos.photo[i].farm), \(photos.photos.photo[i].server)")
+            //        print("\(photos.photos.photo[i].id), \(photos.photos.photo[i].secret), \(photos.photos.photo[i].farm), \(photos.photos.photo[i].server)")
             
             let farm: Int = photos.photos.photo[i].farm
             let serverID: String = photos.photos.photo[i].server
@@ -244,14 +214,61 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             print(imageUrl)
             
             
-          //Call FlckerAPI to download Image Data
-            ParseFickrAPI.downLoadPhotos(url: EndPoints.getImageUrl(farm, serverID, id, secret).url, completionHandler: handleDownLoadPhotos(photos:))
-            
-            
-    }
+            //Call FlckerAPI to download Image Data
+            ParseFickrAPI.downLoadPhotos(url: EndPoints.getImageUrl(farm, serverID, id, secret).url, completionHandler: self.handleDownLoadPhotos(photos:))
+           }
         
         //TODO ENABLE BUTTON
-}
+    }
+    
+    
+    
+    func handleDownLoadPhotos(photos:UIImage?){
+        
+        guard let photos = photos else {
+            //TODO REPLACE WITH SHOW ERROR FUNCTION
+            print("Photo Error no Data")
+            return
+        }
+        
+        //Update Image on Main Thread
+        DispatchQueue.main.async {
+            do {
+                //Append  images to Array
+                self.photosImage.append(photos)
+                print(photos)
+                self.collectionView.reloadData()
+                
+            //GCD: Get Context
+            let photoOfImage = Photo(context: self.dataController.viewContext)
+
+            //Assign Image Data to GCD Photo in PNG Format
+                photoOfImage.flickrImages = (photos.pngData() as Data?)
+
+
+            //Add Photo to GCD Pin
+            self.pin.addToPin(photoOfImage)
+
+
+            //Save GCD Context
+            try self.dataController.viewContext.save()
+
+            print("The is ping count \(self.pin?.pin?.count ?? 0)")
+
+           let imagePath = IndexPath(item: self.photosImage.count - 1, section: 0)
+
+                print("Here is the Image Index \(imagePath)")
+                //TODO RELOAD COLLECTIN VIEW
+                self.collectionView.reloadItems(at: [imagePath])
+                
+         //Check Count and Enable Button
+                
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        
+    }
 
     
     
@@ -264,6 +281,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrCollectionViewCell", for: indexPath) as! FlickrCollectionViewCell
         
+        cell.photoActivityIndicator.startAnimating()
        
         // Render as bit map before rendering
         cell.layer.shouldRasterize = true
@@ -280,12 +298,34 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             }
         }
         
+        cell.photoActivityIndicator.stopAnimating()
         
         return cell
     }
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        
+        self.photoCount -= 1
+        print("The photoCount now is \(self.photoCount)")
+        self.photosImage.remove(at: indexPath.item)
+        self.collectionView.deleteItems(at: [indexPath])
+        
+        // Remove from DB
+        let photoObjs = self.pin?.pin?.allObjects
+        let photoObj = photoObjs?[indexPath.item] as? Photo
+        
+        do {
+            dataController.viewContext.delete(photoObj!)
+            try dataController.viewContext.save()
+        }
+        catch let error
+        {
+            print(error)
+        }
+        
+        return
        
     }
     

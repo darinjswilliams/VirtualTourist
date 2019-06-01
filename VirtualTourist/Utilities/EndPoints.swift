@@ -38,7 +38,7 @@ enum EndPoints {
        
         case .getPhotos(let pageNo, let latitude, let longitude):
             return EndPoints.loginBase.stringValue + EndPoints.apiKeyFlicker.stringValue +
-            "&method=flickr.photos.search&format=json&tags=&page=\(pageNo)&accuracy=12&nojsoncallback=1&lat=\(latitude)&lon=\(longitude)&radius=1"
+            "&method=flickr.photos.search&format=json&tags=&page=\(pageNo)&accuracy=12&nojsoncallback=1&lat=\(latitude)&lon=\(longitude)&radius=6"
         case .getImageUrl(let farm, let serverID, let id, let secret):
             return  "https://farm\(farm).staticflickr.com/\(serverID)/\(id)_\(secret).jpg"
             

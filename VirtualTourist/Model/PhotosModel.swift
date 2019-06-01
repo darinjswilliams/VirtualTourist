@@ -52,3 +52,9 @@ struct SearchPageResult: Codable {
     }
 }
 
+
+struct TouristPhoto: Codable {
+    
+    let message: String
+}
+

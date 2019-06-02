@@ -77,39 +77,47 @@
                             </navigationBar>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="GAp-Li-Wsl">
                                 <rect key="frame" x="0.0" y="76" width="375" height="131"/>
+                                <connections>
+                                    <outlet property="delegate" destination="qoZ-zG-gPk" id="MTq-lR-nBv"/>
+                                </connections>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="wF1-qU-mam">
-                                <rect key="frame" x="0.0" y="215" width="375" height="364"/>
+                                <rect key="frame" x="0.0" y="207" width="375" height="372"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="1RD-2f-UEv">
-                                    <size key="itemSize" width="69" height="68"/>
+                                    <size key="itemSize" width="110" height="91"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
-                                <label key="backgroundView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="312-3v-3Bo">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="364"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="flickerCell" id="nqm-Xy-y2Z">
-                                        <rect key="frame" x="0.0" y="0.0" width="69" height="68"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FlickrCollectionViewCell" id="nqm-Xy-y2Z" customClass="FlickrCollectionViewCell" customModule="VirtualTourist" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="110" height="91"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
-                                            <rect key="frame" x="0.0" y="0.0" width="69" height="68"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="110" height="91"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VlX-ED-vHN">
-                                                    <rect key="frame" x="0.0" y="0.0" width="69" height="68"/>
+                                                    <rect key="frame" x="0.0" y="-16" width="110" height="107"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="N0X-mz-MSX">
+                                                    <rect key="frame" x="45" y="45" width="20" height="20"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                         </view>
+                                        <connections>
+                                            <outlet property="photoActivityIndicator" destination="N0X-mz-MSX" id="YNE-Ww-BoQ"/>
+                                            <outlet property="photoCell" destination="VlX-ED-vHN" id="4bn-5o-Wly"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="qoZ-zG-gPk" id="dy7-1m-MhG"/>
+                                    <outlet property="delegate" destination="qoZ-zG-gPk" id="H97-k9-pjp"/>
+                                </connections>
                             </collectionView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EOR-Ll-IOe">
                                 <rect key="frame" x="0.0" y="579" width="375" height="44"/>
@@ -148,7 +156,6 @@
                     <connections>
                         <outlet property="collectionView" destination="wF1-qU-mam" id="1gg-it-UHc"/>
                         <outlet property="flowLayOut" destination="1RD-2f-UEv" id="wlh-Sh-KrY"/>
-                        <outlet property="labelNoPhotos" destination="312-3v-3Bo" id="Ej7-Rh-KEL"/>
                         <outlet property="mapView" destination="GAp-Li-Wsl" id="ldg-dq-Yz3"/>
                         <outlet property="newPhotosButton" destination="GV1-TX-7OZ" id="rhq-yp-kSr"/>
                     </connections>

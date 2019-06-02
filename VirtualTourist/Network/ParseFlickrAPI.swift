@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class ParseFickrAPI {
     
@@ -47,6 +48,24 @@ class ParseFickrAPI {
         }
     }
     
+
+    
+class func downLoadPhotos(url: URL, completionHandler: @escaping (_ image: UIImage?) -> Void) {
+        DispatchQueue.main.async(execute: { () -> Void in
+            do{
+                let data = try Data(contentsOf: url)
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async { completionHandler(image) }
+                } else { print("Could not decode image")
+                    DispatchQueue.main.async {
+                        completionHandler(nil)
+                    }
+                }
+            }catch { print("Could not load URL: \(url): \(error)") }
+        })
+    }
+
+
     
     
     class func taskForGETRequest<ResponseType: Decodable>(url: URL,response: ResponseType.Type,  completionHandler: @escaping (ResponseType?, Error?) -> Void) -> URLSessionDataTask {
@@ -73,10 +92,51 @@ class ParseFickrAPI {
             let jsonDecoder = JSONDecoder()
             do {
                 let result = try? jsonDecoder.decode(ResponseType.self, from: data)
-//                print("Second Print:..." + String(data: data, encoding: .utf8)!)
+//                print(":..." + String(data: data, encoding: .utf8)!)
                 
                 DispatchQueue.main.async {
                     completionHandler(result, nil)
+                }
+                
+            } catch {
+                DispatchQueue.main.async {
+                    completionHandler(nil,error)
+                }
+            }
+        }
+        
+        downloadTask.resume()
+        
+        return downloadTask
+    }
+    
+    
+    
+    
+    
+    class func taskPhotoImageRequest(url: URL, response: UIImage?, completionHandler: @escaping (UIImage?, Error?) -> Void) -> URLSessionDataTask {
+    
+        var request = URLRequest(url: url)
+        print("Here is the..\(request)")
+        
+        let downloadTask = URLSession.shared.dataTask(with: request) {
+            (data, response, error) in
+            // guard there is data
+            guard let data = data else {
+                // TODO: CompleteHandler can return error
+                DispatchQueue.main.async {
+                    completionHandler(nil, error)
+                }
+                return
+            }
+            
+            let downloadedImage: UIImage = UIImage(data: data)!
+            
+         
+            do {
+          
+                DispatchQueue.main.async {
+                    completionHandler(downloadedImage, nil)
                 }
                 
             } catch {

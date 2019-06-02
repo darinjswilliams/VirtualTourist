@@ -34,6 +34,7 @@ class TravelLocationsViewController: UIViewController, MKMapViewDelegate, UIGest
         
     }
 
+    //MARK - USE GESTURE LONG PRESSED, IF PIN IS TAP TRANSITION TO  PHOTO ALBUM
     @IBAction func pinPressed(_ sender: UILongPressGestureRecognizer) {
         
         let location = sender.location(in: mapView)

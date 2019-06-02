@@ -32,11 +32,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-//        print(coordinates.latitude)
-//         print(coordinates.longitude)
-//        print(pin)
-//        print(dataController)
         
         let space:CGFloat = 3.0
         let dimension = (view.frame.size.width - (2 * space)) / 3.0
@@ -50,8 +45,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
- 
-        
     }
     
     //MARK: retrieve saved images from core data, else call flicker and get new photoz
@@ -64,10 +57,13 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         flowLayOut.minimumLineSpacing = 1
         flowLayOut.itemSize = CGSize(width: 135, height: 135)
         
-        
-        //TODO; CALL FLICKER GET PHOTOS PLACE IF STATEMENT TO GET GCD
+        //MARK if phots are in pin retrieve from GCD
         photoCount = (pin.pin?.count)!
         print("Photo View Controller count from GCD... \(photoCount)")
+        
+        
+        self.newPhotosButton.isEnabled = false
+        
         
         if photoCount > 0 {
             
@@ -78,12 +74,15 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
                  let image = UIImage(data: storedPhoto.flickrImages as! Data)
                  photosImage.append(image!)
             }
+            
+      self.newPhotosButton.isEnabled = true
+            
         } else {
         
          callParseFlickrApi()
-         initializeMapView()
-            
         }
+        
+        initializeMapView()
     }
     
     
@@ -98,7 +97,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         let annotation = MKPointAnnotation()
         
         annotation.coordinate = coordinates!
-//        annotation.title = name
+        annotation.title = "Coordinates Found"
         
         self.mapView.addAnnotation(annotation)
         let region = MKCoordinateRegion(center: coordinates!, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
@@ -113,8 +112,12 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     //MARK Tapping this button should empty the photo album and fetch a new set of images
     @IBAction func newCollectionButtonPressed(_ sender: Any) {
     
-//        self.newPhotosButton.isEnabled = false
         photoCount = 0
+        
+
+         self.newPhotosButton.isEnabled = false
+        
+        //MARK EMPTY THE PHOTO ALBUM
         photosImage = [UIImage]()
         let photoSet = pin?.pin
         for photo in photoSet! {
@@ -218,7 +221,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             ParseFickrAPI.downLoadPhotos(url: EndPoints.getImageUrl(farm, serverID, id, secret).url, completionHandler: self.handleDownLoadPhotos(photos:))
            }
         
-        //TODO ENABLE BUTTON
+     
     }
     
     
@@ -261,7 +264,11 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
                 //TODO RELOAD COLLECTIN VIEW
                 self.collectionView.reloadItems(at: [imagePath])
                 
-         //Check Count and Enable Button
+         //Check Count and Enable B == utton
+                if self.photosImage.count == self.pin.pin?.count {
+                
+                    self.newPhotosButton.isEnabled = true
+                }
                 
             } catch {
                 print(error.localizedDescription)
@@ -347,6 +354,14 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     
+    func showAlert(_ title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction (title: "OK", style: .default, handler: { _ in
+            return
+        }))
+        self.present(alert, animated: true, completion: nil)
+        return
+    }
         
 }
 

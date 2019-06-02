@@ -102,14 +102,14 @@
                                                     <rect key="frame" x="0.0" y="-16" width="110" height="107"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="N0X-mz-MSX">
-                                                    <rect key="frame" x="45" y="45" width="20" height="20"/>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="yuJ-to-iDu">
+                                                    <rect key="frame" x="45" y="35" width="20" height="20"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </activityIndicatorView>
                                             </subviews>
                                         </view>
                                         <connections>
-                                            <outlet property="photoActivityIndicator" destination="N0X-mz-MSX" id="YNE-Ww-BoQ"/>
+                                            <outlet property="photoActivityIndicator" destination="yuJ-to-iDu" id="Y92-Lb-bzp"/>
                                             <outlet property="photoCell" destination="VlX-ED-vHN" id="4bn-5o-Wly"/>
                                         </connections>
                                     </collectionViewCell>

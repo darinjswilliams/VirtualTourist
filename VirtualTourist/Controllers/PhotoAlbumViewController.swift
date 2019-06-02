@@ -144,6 +144,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         guard let photos = photos else {
             print("Unable to Download photos from Flicker")
             print(error!)
+            showAlert("Virtural Tourist", message: "Unable to Download photos from Flicker")
+            
             return
         }
         
@@ -187,6 +189,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         if photos.photos.photo.count <= 0  {
             
             print("NO PHOTOS AT THIS SITE \(photos.photos.photo.count)")
+            self.labelNoPhotos.text = "No Images"
             
             return
         }

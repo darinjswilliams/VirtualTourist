@@ -65,9 +65,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         
         
         self.newPhotosButton.isEnabled = false
-        
-        
-        
+       
         //MARK IF GCD HAS PHOTOS FROM PREVIOUS PIN DISPLAY PHOTOS
         if photoCount > 0 {
             
@@ -147,10 +145,11 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     //MARK The repsone that calls update Map with student locations
     func handleGetFlickerPhotos(photos:FlickerResponse?, error:Error?) {
         
-        guard let photos = photos else {
+        guard let photos = photos, photos.photos.pages <= 0 else {
             print("Unable to Download photos from Flicker")
             print(error!)
-            showAlert("Virtural Tourist", message: "Unable to Download photos from Flicker")
+            self.labelNoPhotos.text = "No Photos"
+//            showAlert("Virtural Tourist", message: "Unable to Download photos from Flicker")
             
             return
         }
@@ -158,17 +157,28 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
       
         //Lets get the pages for photos object
         let totalPages: Int = (photos.photos.pages)
+        
+        guard totalPages == 0 else {
+              self.labelNoPhotos.text = "No Photos"
+              return
+        }
+        
+        if totalPages <= 0 {
+            self.labelNoPhotos.text = "No Photos"
+            return
+        } else {
+        
+        
         print("Here is the page number \(totalPages)")
+      
     
         
      self.getRandowPageNumber(totalPages: totalPages)
-        
+        }
       
     }
     
     func getRandowPageNumber(totalPages: Int) {
-        
-
         
         //lets generate random number between range
         let randomPageNumber = Int.random(in: mininumRange...totalPages)
@@ -258,6 +268,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
 
             //Add Photo to GCD Pin
             self.pin.addToPin(photoOfImage)
+            print("Adding photo to GCD pin \(photoOfImage)")
 
 
             //Save GCD Context
@@ -268,8 +279,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
            let imagePath = IndexPath(item: self.photosImage.count - 1, section: 0)
 
                 print("Here is the Image Index \(imagePath)")
-                //TODO RELOAD COLLECTIN VIEW
+//                TODO RELOAD COLLECTIN VIEW
                 self.collectionView.reloadItems(at: [imagePath])
+ 
                 
               //Check Count and Enable B == utton
                 if self.photosImage.count == self.pin.pin?.count {

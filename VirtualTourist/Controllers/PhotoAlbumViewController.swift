@@ -20,8 +20,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     var photos:[PublicPhoto] = [PublicPhoto]()
     var photoCount: Int = 0
     var photosImage = [UIImage]()
-    
     let mininumRange = 1
+    let maximumRange = 15
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -33,14 +33,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         
-        let space:CGFloat = 3.0
-        let dimension = (view.frame.size.width - (2 * space)) / 3.0
-        let hdimention = (view.frame.size.height - (2 * space)) / 3.0
-        flowLayOut.minimumInteritemSpacing = space
-        flowLayOut.minimumLineSpacing = space
-        flowLayOut.itemSize = CGSize(width: dimension, height: hdimention)
+        
     }
 
     //tear down NSfetchResultsController
@@ -53,11 +47,21 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+
+        let space:CGFloat = 8
+        let dimension = (view.frame.size.width - (2 * space)) / 4.0
+        let hdimention = (view.frame.size.height - (2 * space)) / 4.0
+        flowLayOut.minimumInteritemSpacing = space
+        flowLayOut.minimumLineSpacing = space
+        flowLayOut.itemSize = CGSize(width: dimension, height: hdimention)
+        print("here is frame width \(view.frame.size.width)")
+        print("here is frame dimension \(view.frame.size.height)")
+        
         
         //adjust flow layout
-        flowLayOut.minimumInteritemSpacing = 1
-        flowLayOut.minimumLineSpacing = 1
-        flowLayOut.itemSize = CGSize(width: 135, height: 135)
+//        flowLayOut.minimumInteritemSpacing = 0.2
+//        flowLayOut.minimumLineSpacing = 0.2
+//        flowLayOut.itemSize = CGSize(width: 135, height: 135)
         
         //MARK if phots are in pin retrieve from GCD
         photoCount = (pin.pin?.count)!
@@ -92,6 +96,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     //MARK SET UP MAP VIEW AND COLLECTION RELOAD
     func  initializeMapView() {
         
+     
         
         collectionView?.reloadData()
         collectionView?.allowsMultipleSelection = true;
@@ -115,7 +120,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     @IBAction func newCollectionButtonPressed(_ sender: Any) {
     
         photoCount = 0
-        
 
          self.newPhotosButton.isEnabled = false
         
@@ -145,11 +149,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     //MARK The repsone that calls update Map with student locations
     func handleGetFlickerPhotos(photos:FlickerResponse?, error:Error?) {
         
-        guard let photos = photos, photos.photos.pages <= 0 else {
+        guard let photos = photos else {
             print("Unable to Download photos from Flicker")
-            print(error!)
             self.labelNoPhotos.text = "No Photos"
-//            showAlert("Virtural Tourist", message: "Unable to Download photos from Flicker")
             
             return
         }
@@ -158,10 +160,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         //Lets get the pages for photos object
         let totalPages: Int = (photos.photos.pages)
         
-        guard totalPages == 0 else {
-              self.labelNoPhotos.text = "No Photos"
-              return
-        }
         
         if totalPages <= 0 {
             self.labelNoPhotos.text = "No Photos"
@@ -180,7 +178,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     
     func getRandowPageNumber(totalPages: Int) {
         
-        //lets generate random number between range
+        //MARK -  lets generate random number between RANGE
         let randomPageNumber = Int.random(in: mininumRange...totalPages)
         
         print("Here is the random number generated \(randomPageNumber)")
@@ -224,7 +222,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         
         
         //MARK LIMIT PHOTOS TO 12Y
-        for i in 1 ... 12 {
+        for i in self.mininumRange...self.maximumRange {
 
             let farm: Int = photos.photos.photo[i].farm
             let serverID: String = photos.photos.photo[i].server
@@ -279,7 +277,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
            let imagePath = IndexPath(item: self.photosImage.count - 1, section: 0)
 
                 print("Here is the Image Index \(imagePath)")
-//                TODO RELOAD COLLECTIN VIEW
+                // RELOAD COLLECTION VIEW IMAGE ONE ITEM AT A TIME
                 self.collectionView.reloadItems(at: [imagePath])
  
                 
@@ -314,8 +312,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         cell.layer.rasterizationScale = UIScreen.main.scale
         cell.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.015)
         
-        cell.photoActivityIndicator.startAnimating()
-        
         DispatchQueue.main.async {
             if self.photosImage.count >= indexPath.item + 1 {
            
@@ -326,7 +322,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             }
         }
         
-         cell.photoActivityIndicator.stopAnimating()
         return cell
     }
     

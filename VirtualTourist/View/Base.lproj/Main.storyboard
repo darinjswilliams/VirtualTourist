@@ -49,7 +49,7 @@
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1850" y="-287"/>
+            <point key="canvasLocation" x="2042" y="-359"/>
         </scene>
         <!--Photo Album View Controller-->
         <scene sceneID="Odp-fQ-wmS">
@@ -83,17 +83,20 @@
                                     </navigationBar>
                                     <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="PFW-97-1hV">
                                         <rect key="frame" x="0.0" y="45" width="375" height="140"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="qoZ-zG-gPk" id="oFh-xV-Hlv"/>
+                                        </connections>
                                     </mapView>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="1hR-Jl-Y73">
+                            <stackView opaque="NO" contentMode="scaleAspectFit" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="1hR-Jl-Y73">
                                 <rect key="frame" x="0.0" y="205" width="375" height="386"/>
                                 <subviews>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="F8J-wn-LFc">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="386"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="NF2-2M-KIb">
-                                            <size key="itemSize" width="104" height="95"/>
+                                            <size key="itemSize" width="79" height="81"/>
                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -107,26 +110,27 @@
                                         </label>
                                         <cells>
                                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FlickrCollectionViewCell" id="vNy-Ri-1Jm" customClass="FlickrCollectionViewCell" customModule="VirtualTourist" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="104" height="95"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="79" height="81"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
-                                                    <rect key="frame" x="0.0" y="0.0" width="104" height="95"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="79" height="81"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ha2-sy-aru">
-                                                            <rect key="frame" x="0.0" y="-11" width="125" height="128"/>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ha2-sy-aru">
+                                                            <rect key="frame" x="0.0" y="0.0" width="79" height="81"/>
                                                         </imageView>
                                                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="k1k-tj-33P">
-                                                            <rect key="frame" x="34" y="29" width="37" height="37"/>
+                                                            <rect key="frame" x="22" y="24" width="37" height="37"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         </activityIndicatorView>
                                                     </subviews>
                                                 </view>
                                                 <constraints>
+                                                    <constraint firstItem="Ha2-sy-aru" firstAttribute="top" secondItem="vNy-Ri-1Jm" secondAttribute="top" id="FwO-k8-iby"/>
                                                     <constraint firstItem="Ha2-sy-aru" firstAttribute="leading" secondItem="vNy-Ri-1Jm" secondAttribute="leading" id="eyB-M1-ukK"/>
-                                                    <constraint firstAttribute="trailingMargin" secondItem="Ha2-sy-aru" secondAttribute="trailing" constant="-37" id="h7g-Wm-e9C"/>
-                                                    <constraint firstAttribute="bottomMargin" secondItem="Ha2-sy-aru" secondAttribute="bottom" constant="-22" id="tge-UW-WUV"/>
-                                                    <constraint firstItem="Ha2-sy-aru" firstAttribute="top" secondItem="vNy-Ri-1Jm" secondAttribute="topMargin" constant="-31" id="y2K-ym-hA1"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Ha2-sy-aru" secondAttribute="trailing" id="gFg-fh-rdO"/>
+                                                    <constraint firstItem="Ha2-sy-aru" firstAttribute="leading" secondItem="vNy-Ri-1Jm" secondAttribute="leading" id="ide-e6-WUy"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Ha2-sy-aru" secondAttribute="bottom" id="zgg-F2-OhL"/>
                                                 </constraints>
                                                 <connections>
                                                     <outlet property="photoActivityIndicator" destination="k1k-tj-33P" id="Itb-Iu-KCH"/>
@@ -145,7 +149,7 @@
                                 <rect key="frame" x="0.0" y="591" width="375" height="44"/>
                                 <items>
                                     <barButtonItem style="plain" id="DSi-6f-lct">
-                                        <button key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="uNf-qS-UNe">
+                                        <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="uNf-qS-UNe">
                                             <rect key="frame" x="16" y="7" width="343" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="New Collection"/>
@@ -184,7 +188,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dJ3-Vj-Ts3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2954" y="-449"/>
+            <point key="canvasLocation" x="2952.8000000000002" y="-449.32533733133437"/>
         </scene>
     </scenes>
     <resources>

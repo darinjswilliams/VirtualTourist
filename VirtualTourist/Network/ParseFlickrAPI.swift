@@ -92,7 +92,7 @@ class func downLoadPhotos(url: URL, completionHandler: @escaping (_ image: UIIma
             let jsonDecoder = JSONDecoder()
             do {
                 let result = try? jsonDecoder.decode(ResponseType.self, from: data)
-//                print(":..." + String(data: data, encoding: .utf8)!)
+
                 
                 DispatchQueue.main.async {
                     completionHandler(result, nil)
@@ -111,45 +111,62 @@ class func downLoadPhotos(url: URL, completionHandler: @escaping (_ image: UIIma
     }
     
     
-    
-    
-    
-    class func taskPhotoImageRequest(url: URL, response: UIImage?, completionHandler: @escaping (UIImage?, Error?) -> Void) -> URLSessionDataTask {
-    
-        var request = URLRequest(url: url)
-        print("Here is the..\(request)")
+    class func taskDownLoadPhotosData(url: URL, completionHandler: @escaping (UIImage?, Error?) -> Void) {
         
-        let downloadTask = URLSession.shared.dataTask(with: request) {
+        let downloadTask = URLSession.shared.dataTask(with: url, completionHandler: {
             (data, response, error) in
             // guard there is data
             guard let data = data else {
                 // TODO: CompleteHandler can return error
-                DispatchQueue.main.async {
-                    completionHandler(nil, error)
-                }
+                completionHandler(nil, error)
+             
                 return
             }
             
-            let downloadedImage: UIImage = UIImage(data: data)!
-            
-         
-            do {
-          
-                DispatchQueue.main.async {
-                    completionHandler(downloadedImage, nil)
-                }
-                
-            } catch {
-                DispatchQueue.main.async {
-                    completionHandler(nil,error)
-                }
-            }
-        }
-        
+          let downloadedImage: UIImage = UIImage(data: data)!
+               completionHandler(downloadedImage, nil)
+        })
         downloadTask.resume()
         
-        return downloadTask
     }
+    
+    
+//    class func taskPhotoImageRequest(url: URL, response: UIImage?, completionHandler: @escaping (UIImage?, Error?) -> Void) -> URLSessionDataTask {
+//
+//        var request = URLRequest(url: url)
+//        print("Here is the..\(request)")
+//
+//        let downloadTask = URLSession.shared.dataTask(with: request) {
+//            (data, response, error) in
+//            // guard there is data
+//            guard let data = data else {
+//                // TODO: CompleteHandler can return error
+//                DispatchQueue.main.async {
+//                    completionHandler(nil, error)
+//                }
+//                return
+//            }
+//
+//            let downloadedImage: UIImage = UIImage(data: data)!
+//
+//
+//            do {
+//
+//                DispatchQueue.main.async {
+//                    completionHandler(downloadedImage, nil)
+//                }
+//
+//            } catch {
+//                DispatchQueue.main.async {
+//                    completionHandler(nil,error)
+//                }
+//            }
+//        }
+//
+//        downloadTask.resume()
+//
+//        return downloadTask
+//    }
     
 
 }

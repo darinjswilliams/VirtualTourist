@@ -21,6 +21,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     var photoCount: Int = 0
     var photosImage = [UIImage]()
     
+    let mininumRange = 1
+    
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var flowLayOut: UICollectionViewFlowLayout!
@@ -63,8 +65,8 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         
         
         self.newPhotosButton.isEnabled = false
-        
-        
+       
+        //MARK IF GCD HAS PHOTOS FROM PREVIOUS PIN DISPLAY PHOTOS
         if photoCount > 0 {
             
             let gcdPhotoObjects = pin.pin?.allObjects
@@ -120,6 +122,9 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         //MARK EMPTY THE PHOTO ALBUM
         photosImage = [UIImage]()
         let photoSet = pin?.pin
+        
+        //MARK DELETE ALL PHOTOS FROM GCD
+        print("PHOTOS IN PHOTOTSET \(String(describing: photoSet?.count))")
         for photo in photoSet! {
             dataController.viewContext.delete(photo as! NSManagedObject)
         }
@@ -133,39 +138,55 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     
     func callParseFlickrApi () {
         
-           ParseFickrAPI.processPhotos(url: EndPoints.getAuthentication(coordinates.latitude, coordinates.longitude).url, completionHandler: handleGetFlickerPhotos(photos:error:))
-        
+           ParseFickrAPI.processPhotos(url: EndPoints.getAuthentication(coordinates.latitude, coordinates.longitude).url, completionHandler: self.handleGetFlickerPhotos(photos:error:))
     }
     
     
     //MARK The repsone that calls update Map with student locations
     func handleGetFlickerPhotos(photos:FlickerResponse?, error:Error?) {
         
-        guard let photos = photos else {
+        guard let photos = photos, photos.photos.pages <= 0 else {
             print("Unable to Download photos from Flicker")
             print(error!)
+            self.labelNoPhotos.text = "No Photos"
+//            showAlert("Virtural Tourist", message: "Unable to Download photos from Flicker")
+            
             return
         }
         
       
         //Lets get the pages for photos object
-        let pageNum: Int = (photos.photos.pages)
-        print("Here is the page number \(pageNum)")
+        let totalPages: Int = (photos.photos.pages)
+        
+        guard totalPages == 0 else {
+              self.labelNoPhotos.text = "No Photos"
+              return
+        }
+        
+        if totalPages <= 0 {
+            self.labelNoPhotos.text = "No Photos"
+            return
+        } else {
+        
+        
+        print("Here is the page number \(totalPages)")
+      
     
         
-     self.getRandowPageNumber(pageNum: pageNum)
-        
+     self.getRandowPageNumber(totalPages: totalPages)
+        }
       
     }
     
-    func getRandowPageNumber(pageNum: Int) {
+    func getRandowPageNumber(totalPages: Int) {
         
-        //Generate Random number to Narrow Scope
-        let randPageNumber =  Int(arc4random_uniform(UInt32(pageNum) + 1))
+        //lets generate random number between range
+        let randomPageNumber = Int.random(in: mininumRange...totalPages)
         
-        print("Here is the randome page number \(randPageNumber)")
+        print("Here is the random number generated \(randomPageNumber)")
         
-              ParseFickrAPI.getPhotoLocationByPageNumber(url: EndPoints.getPhotos(randPageNumber, coordinates.latitude, coordinates.longitude).url, completionHandler: handleGetPhotoSearch(photos:error:))
+        
+        ParseFickrAPI.getPhotoLocationByPageNumber(url: EndPoints.getPhotos(randomPageNumber, coordinates.latitude, coordinates.longitude).url, completionHandler: self.handleGetPhotoSearch(photos:error:))
     }
     
     //MARK: SEARCH FOR PHOTOS BY Getting PAGE NUMBER TO NARROW PHOTO SEARCH
@@ -173,20 +194,21 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         
         
         guard let photos = photos else {
+            showAlert("Photo Search", message: "Unable to Download photos from Flicker")
             print("Unable to Download photos from Flicker")
             print(error!)
             return
         }
-        print("Photots \(photos.photos.pages)")
+    
     
         
         //MARK: SEARCH FOR PHOTOS BY Getting PAGE NUMBER TO NARROW PHOTO SEARCH
-        //lets get all the ids so we can grab photos
         print("Photos Count \( photos.photos.photo.count )")
         
         if photos.photos.photo.count <= 0  {
             
             print("NO PHOTOS AT THIS SITE \(photos.photos.photo.count)")
+            self.labelNoPhotos.text = "No Images"
             
             return
         }
@@ -201,36 +223,31 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     func getImageByIdAndDownload(photos:FlickerResponse){
         
         
-        //MARK LIMIT PHOTOS TO 12
-    
-      
+        //MARK LIMIT PHOTOS TO 12Y
         for i in 1 ... 12 {
-            
-            //        print("\(photos.photos.photo[i].id), \(photos.photos.photo[i].secret), \(photos.photos.photo[i].farm), \(photos.photos.photo[i].server)")
-            
+
             let farm: Int = photos.photos.photo[i].farm
             let serverID: String = photos.photos.photo[i].server
             let id: String = photos.photos.photo[i].id
             let secret: String = photos.photos.photo[i].secret
             
-            let imageUrl = EndPoints.getImageUrl(farm, serverID, id, secret).url
+           let imageUrl = EndPoints.getImageUrl(farm, serverID, id, secret).url
             print(imageUrl)
             
             
-            //Call FlckerAPI to download Image Data
-            ParseFickrAPI.downLoadPhotos(url: EndPoints.getImageUrl(farm, serverID, id, secret).url, completionHandler: self.handleDownLoadPhotos(photos:))
+            ParseFickrAPI.taskDownLoadPhotosData(url: imageUrl, completionHandler: self.handleDownLoadPhotos(photos:error:))
+
            }
         
-     
     }
     
     
     
-    func handleDownLoadPhotos(photos:UIImage?){
+    func handleDownLoadPhotos(photos:UIImage?, error:Error?){
         
         guard let photos = photos else {
             //TODO REPLACE WITH SHOW ERROR FUNCTION
-            print("Photo Error no Data")
+            showAlert("Photos Download", message: "No Photos Download")
             return
         }
         
@@ -251,6 +268,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
 
             //Add Photo to GCD Pin
             self.pin.addToPin(photoOfImage)
+            print("Adding photo to GCD pin \(photoOfImage)")
 
 
             //Save GCD Context
@@ -261,10 +279,11 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
            let imagePath = IndexPath(item: self.photosImage.count - 1, section: 0)
 
                 print("Here is the Image Index \(imagePath)")
-                //TODO RELOAD COLLECTIN VIEW
+//                TODO RELOAD COLLECTIN VIEW
                 self.collectionView.reloadItems(at: [imagePath])
+ 
                 
-         //Check Count and Enable B == utton
+              //Check Count and Enable B == utton
                 if self.photosImage.count == self.pin.pin?.count {
                 
                     self.newPhotosButton.isEnabled = true
@@ -288,8 +307,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrCollectionViewCell", for: indexPath) as! FlickrCollectionViewCell
         
-        cell.photoActivityIndicator.startAnimating()
-       
         // Render as bit map before rendering
         cell.layer.shouldRasterize = true
         
@@ -297,20 +314,24 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
         cell.layer.rasterizationScale = UIScreen.main.scale
         cell.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.015)
         
+        cell.photoActivityIndicator.startAnimating()
+        
         DispatchQueue.main.async {
             if self.photosImage.count >= indexPath.item + 1 {
+           
                cell.photoCell.image = self.photosImage[indexPath.item]
+              
             } else {
                 cell.photoCell.image = nil
             }
         }
         
-        cell.photoActivityIndicator.stopAnimating()
-        
+         cell.photoActivityIndicator.stopAnimating()
         return cell
     }
     
     
+    //MARK DELETE PHOTO FROM GCD IF TOUCHED
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         
@@ -337,7 +358,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     
-    // each pin's rendering
+    //MARK Render  each pin's
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let annotationId = "pin"
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: annotationId) as? MKPinAnnotationView

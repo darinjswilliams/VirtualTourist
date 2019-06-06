@@ -80,7 +80,7 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
                  let image = UIImage(data: storedPhoto.flickrImages as! Data)
                  photosImage.append(image!)
             }
-            
+      self.collectionView.reloadData()
       self.newPhotosButton.isEnabled = true
             
         } else {
@@ -198,8 +198,6 @@ class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate, UICo
             return
         }
     
-    
-        
         //MARK: SEARCH FOR PHOTOS BY Getting PAGE NUMBER TO NARROW PHOTO SEARCH
         print("Photos Count \( photos.photos.photo.count )")
         
